@@ -51,7 +51,6 @@ body {
   left: 140px; /* 두 번째 보관함 위치 */
 }
 
-/* ✨ Added */
 #weight-pool3 {
   left: 250px; /* 세 번째 보관함 위치 */
 }
@@ -84,7 +83,7 @@ body {
   background-image: url('weight2.png');
 }
 
-/* ✨ Added section for animal weights */
+/* section for animal weights */
 .weight3 {
   width: 50px;
   height: 50px;
@@ -108,8 +107,6 @@ body {
 .weight3[data-animal-type="dog"] {
   background-image: url('dog.png');
 }
-/* End of added section */
-
 
 .weight1.dragging,
 .weight2.dragging,
@@ -117,8 +114,6 @@ body {
   opacity: 0.5;
 }
 
-
-/* ✨ 변경된 부분: 탱크와 부피 표시를 묶는 영역의 위치를 기존 탱크 위치로 수정 */
 #simulation-area {
   display: flex;
   align-items: center;
@@ -128,7 +123,6 @@ body {
   left: 450px;
 }
 
-/* 🧪 탱크 영역 */
 #tank {
   position: relative;
   width: 100px;
@@ -138,7 +132,6 @@ body {
   overflow: hidden;
 }
 
-/* 물에 잠긴 추들을 담는 컨테이너 */
 #submerged-weights-container {
     position: absolute;
     bottom: 0;
@@ -153,7 +146,6 @@ body {
     padding-bottom: 5px;
 }
 
-/* 💧 물 높이 */
 #water-level {
   position: absolute;
   bottom: 0;
@@ -164,7 +156,6 @@ body {
   z-index: 1;
 }
 
-/* 📏 눈금 영역 */
 #scale {
   position: absolute;
   left: 0;
@@ -203,7 +194,7 @@ body {
 }
 
 .weight-label {
-  font-size: 14px; /* 폰트 크기 조정 */
+  font-size: 14px;
   font-weight: bold;
   margin-bottom: 10px;
   color: #333;
@@ -233,11 +224,9 @@ body {
   color: #0077b6;
 }
 
-
-/* ✨ 변경된 부분: 컨트롤 패널 위치 복원 */
 #controls {
   position: fixed;
-  top: 550px; /* 기존 top 값으로 수정 */
+  top: 550px;
   left: 30px;
   width: 300px;
   background: #f0f0f0e0;
@@ -256,4 +245,10 @@ body {
 #controls input[type="range"] {
   width: 100%;
   margin-top: 5px;
+}
+
+/* ✨ 변경된 부분: 비활성화된 슬라이더 스타일 추가 */
+#controls input[type="range"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

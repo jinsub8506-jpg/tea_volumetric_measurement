@@ -1,7 +1,7 @@
 const tank = document.getElementById('tank');
 const weightPool = document.getElementById('weight-pool');
 const weightPool2 = document.getElementById('weight-pool2');
-const weightPool3 = document.getElementById('weight-pool3'); // ✨ Added
+const weightPool3 = document.getElementById('weight-pool3');
 const waterLevel = document.getElementById('water-level');
 const scale = document.getElementById('scale');
 const submergedWeightsContainer = document.getElementById('submerged-weights-container');
@@ -12,7 +12,6 @@ const volumeText = document.getElementById('volume-text');
 const volumeValueSpan = volumeText.querySelector('span');
 
 // 실험 상수
-// ✨ Added volumes for animals
 const weightVolumes = {
   'weight1': 12, // 황동 추 부피 (mL)
   'weight2': 8,   // 납 추 부피 (mL)
@@ -42,7 +41,7 @@ for (let i = 1; i < 100; i++) {
 let weightsInTankIds = [];
 let draggingElement = null;
 
-// ✨ Helper function to get volume for any weight element
+// Helper function to get volume for any weight element
 function getWeightVolume(element) {
     if (!element) return 0;
     if (element.classList.contains('weight1')) {
@@ -57,14 +56,12 @@ function getWeightVolume(element) {
 }
 
 // 드래그 앤 드롭 이벤트 리스너 (데스크톱)
-// ✨ Updated selector to include .weight3
 document.querySelectorAll('.weight1, .weight2, .weight3').forEach(weight => {
   weight.addEventListener('dragstart', e => {
     e.dataTransfer.setData('text/plain', weight.dataset.id);
   });
 });
 
-// ✨ Updated drop zones to include weightPool3
 [tank, weightPool, weightPool2, weightPool3].forEach(zone => {
     zone.addEventListener('dragover', e => e.preventDefault());
     zone.addEventListener('drop', e => {
@@ -76,7 +73,6 @@ document.querySelectorAll('.weight1, .weight2, .weight3').forEach(weight => {
 
 
 // 터치 이벤트 리스너 (모바일)
-// ✨ Updated selector to include .weight3
 document.querySelectorAll('.weight1, .weight2, .weight3').forEach(weight => {
   weight.addEventListener('touchstart', e => {
     if (e.target.closest('.weight1') || e.target.closest('.weight2') || e.target.closest('.weight3')) {
@@ -109,7 +105,7 @@ document.addEventListener('touchend', e => {
     const tankRect = tank.getBoundingClientRect();
     const weightPoolRect = weightPool.getBoundingClientRect();
     const weightPool2Rect = weightPool2.getBoundingClientRect();
-    const weightPool3Rect = weightPool3.getBoundingClientRect(); // ✨ Added
+    const weightPool3Rect = weightPool3.getBoundingClientRect();
 
     if (touch.clientX >= tankRect.left && touch.clientX <= tankRect.right &&
         touch.clientY >= tankRect.top && touch.clientY <= tankRect.bottom) {
@@ -120,13 +116,11 @@ document.addEventListener('touchend', e => {
     } else if (touch.clientX >= weightPool2Rect.left && touch.clientX <= weightPool2Rect.right &&
                touch.clientY >= weightPool2Rect.top && touch.clientY <= weightPool2Rect.bottom) {
         dropTarget = weightPool2;
-    // ✨ Added check for weightPool3
     } else if (touch.clientX >= weightPool3Rect.left && touch.clientX <= weightPool3Rect.right &&
                touch.clientY >= weightPool3Rect.top && touch.clientY <= weightPool3Rect.bottom) {
         dropTarget = weightPool3;
     }
 
-    // ✨ Updated logic to determine the original pool
     const originalPool = draggingElement.classList.contains('weight1') ? weightPool :
                          draggingElement.classList.contains('weight2') ? weightPool2 : weightPool3;
     if (!dropTarget) {
@@ -148,21 +142,48 @@ document.addEventListener('touchend', e => {
     draggingElement = null;
 });
 
-// 🚨 [수정된 부분] 드롭 로직 전체 개선
+// ✨ 변경된 부분: 드롭 로직 전체 수정
 function handleDrop(draggedId, targetZone) {
     const sourceElement = document.querySelector(`[data-id="${draggedId}"]`);
     const wasInTank = weightsInTankIds.includes(draggedId);
 
     if (targetZone === tank) {
         if (!wasInTank) {
-            // 보관함 -> 탱크
+            // 보관함 -> 탱크로 이동하는 경우
+            
+            // 1. 물이 없는 경우
+            if (parseInt(waterLevelSlider.value) < 1) { // 0일 경우 방지
+                alert("먼저 메스실린더에 물을 넣어주세요.");
+                return;
+            }
+
+            // 현재 물 높이와 쌓일 추의 높이 계산
             const baseWaterLevelMl = parseInt(waterLevelSlider.value);
             const currentAddedVolumeMl = weightsInTankIds.reduce((total, id) => {
                 const el = document.querySelector(`[data-id="${id}"]`);
-                return total + getWeightVolume(el); // ✨ Use helper
+                return total + getWeightVolume(el);
             }, 0);
+            
+            // 물이 잠기기 전의 현재 수위 (px)
+            const currentWaterLevelPx = (baseWaterLevelMl + currentAddedVolumeMl) * pxPerMl;
 
-            const potentialTotalVolumeMl = baseWaterLevelMl + currentAddedVolumeMl + getWeightVolume(sourceElement); // ✨ Use helper
+            // 추가될 추를 포함하여 쌓일 모든 추의 전체 높이 (px)
+            let potentialStackedHeightPx = 0;
+            weightsInTankIds.forEach(id => {
+                const el = document.querySelector(`[data-id="${id}"]`);
+                potentialStackedHeightPx += el.offsetHeight;
+            });
+            potentialStackedHeightPx += sourceElement.offsetHeight;
+            potentialStackedHeightPx += Math.max(0, weightsInTankIds.length) * 2; // 추 사이의 간격
+
+            // 2. 물체가 증가할 물 높이에 완전히 잠기는지 확인
+            if (potentialStackedHeightPx > currentWaterLevelPx) {
+                alert("물체가 물에 잠기도록 해주세요.");
+                return;
+            }
+
+            // 3. 물이 넘치는지 확인
+            const potentialTotalVolumeMl = baseWaterLevelMl + currentAddedVolumeMl + getWeightVolume(sourceElement);
             if (potentialTotalVolumeMl > maxVolumeMl) {
                 alert("물이 넘치지 않도록 해주세요.");
             } else {
@@ -170,17 +191,15 @@ function handleDrop(draggedId, targetZone) {
                 sourceElement.style.visibility = 'hidden';
             }
         }
-        // 탱크 -> 탱크는 아무것도 안 함 (상태 변화 없음)
-    } else { // targetZone is a pool
+    } else { // targetZone이 보관함인 경우
         if (wasInTank) {
-            // 탱크 -> 보관함
+            // 탱크 -> 보관함으로 이동하는 경우
             const idx = weightsInTankIds.indexOf(draggedId);
             if (idx > -1) {
                 weightsInTankIds.splice(idx, 1);
                 sourceElement.style.visibility = 'visible';
             }
         }
-        // 보관함 -> 보관함은 아무것도 안 함 (상태 변화 없음)
     }
 
     renderWeightsInTank();
@@ -188,7 +207,7 @@ function handleDrop(draggedId, targetZone) {
 }
 
 
-// 🚨 [수정된 부분] 물탱크 안의 추 렌더링 및 터치 로직
+// 물탱크 안의 추 렌더링
 function renderWeightsInTank() {
   submergedWeightsContainer.innerHTML = '';
   weightsInTankIds.slice().reverse().forEach(id => {
@@ -197,7 +216,6 @@ function renderWeightsInTank() {
     weight.className = originalWeight.className; 
     weight.dataset.id = id;
     
-    // ✨ Copy animal type data if it exists
     if (originalWeight.dataset.animalType) {
         weight.dataset.animalType = originalWeight.dataset.animalType;
     }
@@ -205,7 +223,6 @@ function renderWeightsInTank() {
     weight.draggable = true;
     weight.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', id));
     
-    // 물탱크 안의 추를 터치했을 때의 동작
     weight.addEventListener('touchstart', e => {
         e.preventDefault();
         
@@ -215,7 +232,6 @@ function renderWeightsInTank() {
 
         draggingElement = originalElement;
 
-        // 원본 요소를 보이게 하고 드래그 시작
         draggingElement.style.visibility = 'visible'; 
         draggingElement.classList.add('dragging');
         document.body.appendChild(draggingElement);
@@ -226,7 +242,6 @@ function renderWeightsInTank() {
         draggingElement.style.left = `${touch.clientX - draggingElement.offsetWidth / 2}px`;
         draggingElement.style.top = `${touch.clientY - draggingElement.offsetHeight / 2}px`;
         
-        // 탱크 안의 복제된 추는 숨겨서 집어든 것처럼 보이게 함
         e.target.style.visibility = 'hidden';
 
     }, { passive: false });
@@ -240,12 +255,15 @@ function updateWaterLevel() {
   const baseWaterLevelMl = parseInt(waterLevelSlider.value);
   const addedVolumeMl = weightsInTankIds.reduce((totalVolume, id) => {
     const weightElement = document.querySelector(`[data-id="${id}"]`);
-    return totalVolume + getWeightVolume(weightElement); // ✨ Use helper
+    return totalVolume + getWeightVolume(weightElement);
   }, 0);
   const totalVolumeMl = baseWaterLevelMl + addedVolumeMl;
   const totalHeight = totalVolumeMl * pxPerMl;
   waterLevel.style.height = totalHeight + 'px';
   updateVolumeDisplay();
+
+  // 탱크 안의 추 유무에 따라 슬라이더 활성화/비활성화
+  waterLevelSlider.disabled = weightsInTankIds.length > 0;
 }
 
 // 부피 표시 업데이트
@@ -253,7 +271,7 @@ function updateVolumeDisplay() {
     const baseWaterLevelMl = parseInt(waterLevelSlider.value);
     const addedVolumeMl = weightsInTankIds.reduce((total, id) => {
         const el = document.querySelector(`[data-id="${id}"]`);
-        return total + getWeightVolume(el); // ✨ Use helper
+        return total + getWeightVolume(el);
     }, 0);
     const totalVolumeMl = baseWaterLevelMl + addedVolumeMl;
     volumeValueSpan.textContent = totalVolumeMl;
@@ -266,6 +284,20 @@ waterLevelSlider.addEventListener('input', () => {
     updateWaterLevel();
 });
 showVolumeCheckbox.addEventListener('change', updateVolumeDisplay);
+
+// 비활성화된 슬라이더 클릭 시 알림 표시
+waterLevelSlider.addEventListener('mousedown', () => {
+    if (waterLevelSlider.disabled) {
+        alert("메스실린더 안에 물체를 모두 꺼내주세요.");
+    }
+});
+// 터치 환경에서도 동일하게 알림 표시
+waterLevelSlider.addEventListener('touchstart', () => {
+    if (waterLevelSlider.disabled) {
+        alert("메스실린더 안에 물체를 모두 꺼내주세요.");
+    }
+});
+
 
 // 초기화
 waterLevelValue.textContent = waterLevelSlider.value;
