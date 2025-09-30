@@ -142,7 +142,7 @@ document.addEventListener('touchend', e => {
     draggingElement = null;
 });
 
-// ✨ 변경된 부분: 드롭 로직 전체 수정
+
 function handleDrop(draggedId, targetZone) {
     const sourceElement = document.querySelector(`[data-id="${draggedId}"]`);
     const wasInTank = weightsInTankIds.includes(draggedId);
@@ -164,10 +164,8 @@ function handleDrop(draggedId, targetZone) {
                 return total + getWeightVolume(el);
             }, 0);
             
-            // 물이 잠기기 전의 현재 수위 (px)
             const currentWaterLevelPx = (baseWaterLevelMl + currentAddedVolumeMl) * pxPerMl;
 
-            // 추가될 추를 포함하여 쌓일 모든 추의 전체 높이 (px)
             let potentialStackedHeightPx = 0;
             weightsInTankIds.forEach(id => {
                 const el = document.querySelector(`[data-id="${id}"]`);
@@ -302,3 +300,8 @@ waterLevelSlider.addEventListener('touchstart', () => {
 // 초기화
 waterLevelValue.textContent = waterLevelSlider.value;
 updateWaterLevel();
+
+// ✨✨✨ 모바일에서 길게 눌렀을 때 메뉴 뜨는 현상 방지 ✨✨✨
+document.querySelectorAll('.weight1, .weight2, .weight3, #waterLevelSlider').forEach(el => {
+  el.addEventListener('contextmenu', e => e.preventDefault());
+});
