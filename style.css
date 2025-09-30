@@ -1,0 +1,259 @@
+body {
+  font-family: sans-serif;
+  background: #eef;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 20px;
+  margin-left: 200px;
+}
+
+#background-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 960px;
+  height: 800px;
+  background-image: url("lab-background.png");
+  background-repeat: no-repeat;
+  background-size: 860px 760px;
+  z-index: -3;
+}
+
+.description {
+  background-color: #ffffffd0;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+}
+
+#weight-pool, #weight-pool2, #weight-pool3 {
+  position: fixed;
+  top: 250px;
+  width: 100px; /* 너비 조정 */
+  height: 250px;
+  background: #ddd;
+  border: 2px solid #aaa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  z-index: 10;
+}
+
+#weight-pool {
+  left: 30px;
+}
+
+#weight-pool2 {
+  left: 140px; /* 두 번째 보관함 위치 */
+}
+
+/* ✨ Added */
+#weight-pool3 {
+  left: 250px; /* 세 번째 보관함 위치 */
+}
+
+/* 첫 번째 종류 추 스타일 */
+.weight1 {
+  width: 50px;
+  height: 40px;
+  background-color: #888;
+  cursor: grab;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 5;
+  flex-shrink: 0;
+  background-image: url('weight1.png');
+}
+
+/* 두 번째 종류 추 스타일 */
+.weight2 {
+  width: 40px; /* 이 값을 수정하여 크기 변경 */
+  height: 30px; /* 이 값을 수정하여 크기 변경 */
+  background-color: #888;
+  cursor: grab;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 5;
+  flex-shrink: 0;
+  background-image: url('weight2.png');
+}
+
+/* ✨ Added section for animal weights */
+.weight3 {
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  cursor: grab;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+.weight3[data-animal-type="rabbit"] {
+  background-image: url('rabbit.png');
+}
+
+.weight3[data-animal-type="cat"] {
+  background-image: url('cat.png');
+}
+
+.weight3[data-animal-type="dog"] {
+  background-image: url('dog.png');
+}
+/* End of added section */
+
+
+.weight1.dragging,
+.weight2.dragging,
+.weight3.dragging {
+  opacity: 0.5;
+}
+
+
+/* ✨ 변경된 부분: 탱크와 부피 표시를 묶는 영역의 위치를 기존 탱크 위치로 수정 */
+#simulation-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: absolute;
+  top: 220px;
+  left: 450px;
+}
+
+/* 🧪 탱크 영역 */
+#tank {
+  position: relative;
+  width: 100px;
+  height: 400px;
+  background: #a0d8ef;
+  border: 2px solid #0077b6;
+  overflow: hidden;
+}
+
+/* 물에 잠긴 추들을 담는 컨테이너 */
+#submerged-weights-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2px;
+    padding-bottom: 5px;
+}
+
+/* 💧 물 높이 */
+#water-level {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #0077b6;
+  height: 200px;
+  transition: height 0.3s ease;
+  z-index: 1;
+}
+
+/* 📏 눈금 영역 */
+#scale {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.tick {
+  position: absolute;
+  left: 5px;
+  font-size: 12px;
+  color: #000;
+  width: 100%;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #000;
+}
+
+.subtick {
+  position: absolute;
+  right: 5px;
+  width: 30%;
+  height: 0;
+  border-bottom: 1px solid #444;
+  opacity: 0.6;
+}
+
+.midtick {
+  position: absolute;
+  right: 5px;
+  width: 60%;
+  height: 0;
+  border-bottom: 2px solid #444;
+  opacity: 0.8;
+}
+
+.weight-label {
+  font-size: 14px; /* 폰트 크기 조정 */
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
+}
+
+#volume-display-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f0f0f0e0;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#volume-display-container label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#volume-text {
+  font-weight: bold;
+  color: #0077b6;
+}
+
+
+/* ✨ 변경된 부분: 컨트롤 패널 위치 복원 */
+#controls {
+  position: fixed;
+  top: 550px; /* 기존 top 값으로 수정 */
+  left: 30px;
+  width: 300px;
+  background: #f0f0f0e0;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  z-index: 20;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#controls label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#controls input[type="range"] {
+  width: 100%;
+  margin-top: 5px;
+}

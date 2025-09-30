@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>부피 측정 실험_교사용</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="background-wrapper"></div>
+
+  <h2>🔬 메스실린더로 부피 측정하기</h2>
+  <p class="description">
+    왼쪽 보관함의 추를 메스실린더로 드래그하여 넣어보세요.<br>
+    물이 차오르는 높이를 눈금으로 읽어 물질의 부피를 측정할 수 있습니다.
+  </p>
+
+  <div id="weight-pool">
+    <div class="weight-label">100g 추<br>(황동)</div>
+    <div class="weight1" draggable="true" data-id="w1"></div>
+    <div class="weight1" draggable="true" data-id="w2"></div>
+    <div class="weight1" draggable="true" data-id="w3"></div>
+    <div class="weight1" draggable="true" data-id="w4"></div>
+  </div>
+
+  <div id="weight-pool2">
+    <div class="weight-label">100g 추<br>(납)</div>
+    <div class="weight2" draggable="true" data-id="w5"></div>
+    <div class="weight2" draggable="true" data-id="w6"></div>
+    <div class="weight2" draggable="true" data-id="w7"></div>
+    <div class="weight2" draggable="true" data-id="w8"></div>
+  </div>
+
+  <div id="weight-pool3">
+    <div class="weight-label">동물 친구들<br>(임의의 물질)</div>
+    <div class="weight3" data-animal-type="rabbit" draggable="true" data-id="w9"></div>
+    <div class="weight3" data-animal-type="cat" draggable="true" data-id="w10"></div>
+    <div class="weight3" data-animal-type="dog" draggable="true" data-id="w11"></div>
+  </div>
+  <div id="simulation-area">
+    <div id="tank">
+      <div id="water-level"></div>
+      <div id="submerged-weights-container"></div>
+      <div id="scale">
+        <div class="tick" style="bottom: 0%">0</div>
+        <div class="tick" style="bottom: 10%">20</div>
+        <div class="tick" style="bottom: 20%">40</div>
+        <div class="tick" style="bottom: 30%">60</div>
+        <div class="tick" style="bottom: 40%">80</div>
+        <div class="tick" style="bottom: 50%">100</div>
+        <div class="tick" style="bottom: 60%">120</div>
+        <div class="tick" style="bottom: 70%">140</div>
+        <div class="tick" style="bottom: 80%">160</div>
+        <div class="tick" style="bottom: 90%">180</div>
+        <div class="tick" style="bottom: 100%">200</div>
+      </div>
+    </div>
+
+    <div id="volume-display-container">
+      <label>
+        <input type="checkbox" id="showVolumeCheckbox">
+        부피 보이기
+      </label>
+      <div id="volume-text" style="display: none;">부피: <span>100</span> mL</div>
+    </div>
+  </div>
+
+
+  <div id="controls">
+    <label for="waterLevelSlider">💧 초기 물 높이 조절: <span id="waterLevelValue">100</span> mL</label>
+    <input type="range" id="waterLevelSlider" min="50" max="150" value="100" step="1">
+  </div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
